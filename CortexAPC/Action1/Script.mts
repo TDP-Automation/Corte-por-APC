@@ -344,59 +344,91 @@ Sub ActualizarAtributos()
 	'Next
 End Sub
 Sub ResumenOrden()
-'
-		tiempo = 0
-		Do
-			'While((JavaWindow("Ejecutivo de interacción").JavaDialog("Error interno").Exist) Or (JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").Exist) Or (JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist)) = False
-			While((JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").Exist) Or (JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist)) = False
-				wait 1
-				JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaButton("Validar y Ver Contrato").Click
-				tiempo = tiempo + 1
-				wait 3
-			Wend
-			If JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").JavaButton("OK").Exist Then
-				wait 3
-				var1= JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").JavaObject("JPanel").GetROProperty("attached text")
-				JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"MensajeContrato.png", True
-				imagenToWord "Mensaje Contrato", RutaEvidencias() &Num_Iter&"_"&"MensajeContrato.png"
-				JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").JavaButton("OK").Click
-				wait 2
-			End If
-			wait 1
-			If JavaWindow("Ejecutivo de interacción").JavaDialog("Error interno").Exist(2) Then
-				JavaWindow("Ejecutivo de interacción").JavaDialog("Error interno").Close
-				wait 2
-			End If
-			If tiempo>=60 Then
-				DataTable("s_Detalle",dtLocalSheet) = "Fallido"
-				DataTable("s_Resultado",dtLocalSheet) = "Error de Contrato, no se a cargado el contrato correctamente"
-				Reporter.ReportEvent micFail, DataTable("s_Detalle",dtLocalSheet), DataTable("s_Resultado",dtLocalSheet)
-				ExitActionIteration
-			else
-				Reporter.ReportEvent micPass,"Contrato Exitoso","Se a cargado el contrato correctamente"
-			End If
-			wait 1
-		Loop While Not ((JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist(1)) Or (var1="Contratos no Generados") Or (var1="0"))
-		wait 3
+	While 	JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaButton("Validar y Ver Contrato").Exist = False
+		wait 1
+	Wend
+	JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaButton("Validar y Ver Contrato").Click
 	
-	tiempo=0
-	Do
-		tiempo=tiempo+1
-		If JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist(2) Then
-			JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"ContratoCargado.png", True
-			imagenToWord "Contrato cargado",RutaEvidencias() &Num_Iter&"_"&"ContratoCargado.png"
-			JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Close
-			wait 1
-			JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaCheckBox("El cliente firmó.").Set "ON"
-			wait 1
-			Exit Do
-		Else 
-			'RunAction "WIC2", oneIteration
-			Exit Do
-		End If
-	wait 1
-	Loop While Not (tiempo=30)
+	wait 2
+	
+'    If DataTable("e_WIC_Activa", dtLocalSheet) = "SI" Then
+'				'RunAction "WIC2", oneIteration
+'
+'		Else 
+				
+				While JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist = False
+				 	wait 1
+				Wend
 
+			 If JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist= True Then
+			 	 	JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() & "LinkDocu.png", True
+					imagenToWord "LinkDeDocumentación_"&Num_Iter,RutaEvidencias() & "LinkDocu.png"
+					JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Close
+						wait 2
+					
+					 Dim var
+					 var = JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaCheckBox("El cliente firmó.").GetROProperty("enabled")
+					If var = "1"  Then
+						JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaCheckBox("El cliente firmó.").Set "ON"
+					End If
+					
+			End If
+
+'			
+'	End If
+'
+'		tiempo = 0
+'		Do
+'			'While((JavaWindow("Ejecutivo de interacción").JavaDialog("Error interno").Exist) Or (JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").Exist) Or (JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist)) = False
+'			While((JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").Exist) Or (JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist)) = False
+'				wait 1
+		'	JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaButton("Validar y Ver Contrato").Click
+'				tiempo = tiempo + 1
+'				wait 3
+'			Wend
+'			If JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").JavaButton("OK").Exist Then
+'				wait 3
+'				var1= JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").JavaObject("JPanel").GetROProperty("attached text")
+'				JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"MensajeContrato.png", True
+'				imagenToWord "Mensaje Contrato", RutaEvidencias() &Num_Iter&"_"&"MensajeContrato.png"
+'				JavaWindow("Ejecutivo de interacción").JavaDialog("Mensaje").JavaButton("OK").Click
+'				wait 2
+'			End If
+'			wait 1
+'			If JavaWindow("Ejecutivo de interacción").JavaDialog("Error interno").Exist(2) Then
+'				JavaWindow("Ejecutivo de interacción").JavaDialog("Error interno").Close
+'				wait 2
+'			End If
+'			If tiempo>=60 Then
+'				DataTable("s_Detalle",dtLocalSheet) = "Fallido"
+'				DataTable("s_Resultado",dtLocalSheet) = "Error de Contrato, no se a cargado el contrato correctamente"
+'				Reporter.ReportEvent micFail, DataTable("s_Detalle",dtLocalSheet), DataTable("s_Resultado",dtLocalSheet)
+'				ExitActionIteration
+'			else
+'				Reporter.ReportEvent micPass,"Contrato Exitoso","Se a cargado el contrato correctamente"
+'			End If
+'			wait 1
+'		Loop While Not ((JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist(1)) Or (var1="Contratos no Generados") Or (var1="0"))
+'		wait 3
+'	
+'	tiempo=0
+'	Do
+'		tiempo=tiempo+1
+'		If JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Exist(2) Then
+'			JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"ContratoCargado.png", True
+'			imagenToWord "Contrato cargado",RutaEvidencias() &Num_Iter&"_"&"ContratoCargado.png"
+'			JavaWindow("Ejecutivo de interacción").JavaDialog("Resumen de la orden (Orden").Close
+'			wait 1
+'			JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaCheckBox("El cliente firmó.").Set "ON"
+'			wait 1
+'			Exit Do
+'		Else 
+'			'RunAction "WIC2", oneIteration
+'			Exit Do
+'		End If
+'	wait 1
+'	Loop While Not (tiempo=30)
+'
 	JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"ResumenOrden.png", True
 	imagenToWord "Resumen de la Orden",RutaEvidencias() &Num_Iter&"_"&"ResumenOrden.png"
 	JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Resumen de la orden (Orden").JavaButton("Enviar orden").Click
@@ -671,29 +703,56 @@ Sub DetalleActividadOrden()
 	JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"ActividadesdeOrden_2"&".png", True
 	imagenToWord "Orden Cerrada", RutaEvidencias() &Num_Iter&"_"&"ActividadesdeOrden_2"&".png"
 	
+	dim Iterator , filas	
 	filas=JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaTable("SearchJTable").GetROProperty("rows")
-	For Iterator = 0 To filas-1
-		varselec=JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaTable("SearchJTable").GetCellData(Iterator,0)
-	Next
-	
-	If varselec<>"Cerrar Acción de Orden" Then
-	 	DataTable("s_Resultado",dtLocalSheet)="Fallido"
-		DataTable("s_Detalle",dtLocalSheet)="La orden "&DataTable("s_Nro_Orden",dtLocalSheet)&" no culmino en estado Cerrado, falló en la Actividad "&varselec&""
-		Reporter.ReportEvent micFail, DataTable("s_Resultado",dtLocalSheet), DataTable("s_Detalle",dtLocalSheet)
+	For Iterator = filas-1 To 0 step -1	    
+		varselec=JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaTable("SearchJTable").GetCellData(Iterator,0)		
 		
-		JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaButton("Cancelar").Click
-
-		wait 2
-		If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Exist Then
-			JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Click
-			wait 2
-		End If
-		If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Grupo de órdenes").JavaButton("Cerrar").Exist(2) Then
-			JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Grupo de órdenes").JavaButton("Cerrar").Click
-		End If
-		ExitActionIteration
-		wait 1
-	End If
+		If varselec="Cerrar Acción de Orden" or varselec="Actualizar Descuento" Then
+			DataTable("s_Resultado",dtLocalSheet)="Exitoso"
+			DataTable("s_Detalle",dtLocalSheet)="La orden "&DataTable("s_Nro_Orden",dtLocalSheet)&" culmino en estado Cerrado, exitoso en la Actividad "&varselec&""
+			Reporter.ReportEvent micPass, DataTable("s_Resultado",dtLocalSheet), DataTable("s_Detalle",dtLocalSheet) 	   			    	
+		     Exit for 	    
+		     Else 
+		     	DataTable("s_Resultado",dtLocalSheet)="Fallido"
+				DataTable("s_Detalle",dtLocalSheet)="La orden "&DataTable("s_Nro_Orden",dtLocalSheet)&" no culmino en estado Cerrado, falló en la Actividad "&varselec&""
+				Reporter.ReportEvent micFail, DataTable("s_Resultado",dtLocalSheet), DataTable("s_Detalle",dtLocalSheet)
+				
+				JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaButton("Cancelar").Click
+		
+				wait 2
+				If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Exist Then
+					JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Click
+					wait 2
+				End If
+				If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Grupo de órdenes").JavaButton("Cerrar").Exist(2) Then
+					JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Grupo de órdenes").JavaButton("Cerrar").Click
+				End If
+				ExitActionIteration
+				Exit for
+		     
+		End If	
+	Next
+wait 1
+	
+'	If varselec<>"Cerrar Acción de Orden" or varselec<>"Actualizar Descuento" Then
+'	 	DataTable("s_Resultado",dtLocalSheet)="Fallido"
+'		DataTable("s_Detalle",dtLocalSheet)="La orden "&DataTable("s_Nro_Orden",dtLocalSheet)&" no culmino en estado Cerrado, falló en la Actividad "&varselec&""
+'		Reporter.ReportEvent micFail, DataTable("s_Resultado",dtLocalSheet), DataTable("s_Detalle",dtLocalSheet)
+'		
+'		JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaButton("Cancelar").Click
+'
+'		wait 2
+'		If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Exist Then
+'			JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Click
+'			wait 2
+'		End If
+'		If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Grupo de órdenes").JavaButton("Cerrar").Exist(2) Then
+'			JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Grupo de órdenes").JavaButton("Cerrar").Click
+'		End If
+'		ExitActionIteration
+'		wait 1
+'	End If
 	JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Ver acción de orden: 789395A").JavaButton("Cancelar").Click
 
 	If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Buscar: Orden").JavaButton("Cerrar").Exist Then
@@ -754,6 +813,9 @@ If JavaWindow("Ejecutivo de interacción").JavaDialog("Problema").Exist Then
 		ExitActionIteration
 	End If
 End If
+
+
+
 
 
 
