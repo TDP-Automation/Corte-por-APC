@@ -61,7 +61,8 @@ Sub PanelInteraccion()
 		Wend
 
 End Sub
-Sub BuscarSuscripcion()
+Sub BuscarSuscripcion()	
+	wait 10
 
 	If JavaWindow("Ejecutivo de interacción").JavaInternalFrame("Panel de Interacción").JavaButton("Ver Detalles").Exist(1) Then
 		JavaWindow("Ejecutivo de interacción").CaptureBitmap RutaEvidencias() &Num_Iter&"_"&"PanelInteraccion.png", True
